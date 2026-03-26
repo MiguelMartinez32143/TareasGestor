@@ -1,18 +1,18 @@
 {
-  "name": "ejemplo",
+  "name": "gestor",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:ejemplo": "node dist/ejemplo/server/server.mjs",
-    "build:prod": "ng build --configuration production --base-href=/GestoDeTareas/ --deploy-url=/GestoDeTareas/",
-    "deploy": "npm run build:prod && npx angular-cli-ghpages --dir=dist/ejemplo/browser"
+    "serve:ssr:gestor": "node dist/gestor/server/server.mjs",
+    "deploy": "ng build --configuration production --base-href=/gestor/ && npx angular-cli-ghpages --dir=dist/gestor/browser"
   },
   "private": true,
-  "packageManager": "npm@11.6.2",
+  "packageManager": "npm@11.9.0",
   "dependencies": {
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -27,7 +27,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.21",
+    "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
     "@types/express": "^5.0.1",

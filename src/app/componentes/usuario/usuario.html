@@ -1,8 +1,0 @@
-<nav class="menu-lateral">
-    @for (usuario of lista; track usuario.id) {
-    <button class="tarjeta-colaborador" [class.activo]="activo?.id === usuario.id" (click)="alSeleccionarUsuario(usuario)">
-        <img [src]="usuario.avatar" [alt]="usuario.nombre" class="foto" />
-        <span>{{ usuario.nombre }}</span>
-    </button>
-    }
-</nav>

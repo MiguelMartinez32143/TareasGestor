@@ -1,0 +1,58 @@
+:host {
+    display: block;
+}
+
+article {
+    background: #bc95e7;
+    padding: 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #2d1b4e;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: #2d1b4e;
+}
+
+time {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6a4f91;
+    letter-spacing: 0.5px;
+}
+
+p {
+    font-size: 1.05rem;
+    color: #2d1b4e;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.acciones {
+    text-align: right;
+    margin: 0;
+}
+
+.acciones button {
+    padding: 10px 24px;
+    border-radius: 6px;
+    border: none;
+    background: #2b114d;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.acciones button:hover,
+.acciones button:active {
+    background: #1c0a34;
+    transform: scale(1.05);
+}

@@ -1,22 +1,18 @@
-<main class="contenedor-app">
-  
-  <app-encabezado></app-encabezado>
+<app-encabezado />
 
-  
-  <section class="area-contenido">
-    
-    <app-usuario 
-    [lista]="usuarios" 
-    [activo]="usuarioActual" 
-    (seleccion)="seleccionarUsuario($event)"><!--De Hijo a Padre -->
-    </app-usuario>
-
-    
-    @if (usuarioActual) {
-      <app-tareas 
-      [usuario]="usuarioActual"
-      [userId]="usuarioActual.id"><!--De Padre a Hijo -->
-      </app-tareas>
+<main>
+  <ul id="usuarios">
+    @for (usuario of usuarios; track usuario.id) {
+    <li>
+      <app-usuario [seleccionado]="usuario.id === idUsuarioSeleccionado" [usuario]="usuario"
+        (seleccion)="alSeleccionarUsuario($event)" />
+    </li>
     }
-  </section>
+  </ul>
+
+  @if (usuarioSeleccionado) {
+  <app-tareas [idUsuario]="usuarioSeleccionado.id" [nombre]="usuarioSeleccionado.nombre" />
+  } @else {
+  <p id="textoCondicional">Selecciona un usuario de la lista</p>
+  }
 </main>

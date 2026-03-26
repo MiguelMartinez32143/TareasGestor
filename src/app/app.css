@@ -1,26 +1,51 @@
-.contenedor-app {
+:host {
+  display: block;
   width: 100%;
   min-height: 100vh;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  font-family: system-ui, -apple-system, sans-serif;
   background: #120a1f;
 }
 
-.area-contenido {
+main {
+  width: 100%;
   display: flex;
   flex: 1;
-  width: 100%;
   gap: 40px;
   padding: 40px 60px;
   align-items: flex-start;
 }
 
+#usuarios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 260px;
+  flex-shrink: 0;
+}
+
+#textoCondicional {
+  font-weight: bold;
+  font-size: 1.15rem;
+  margin: 0;
+  text-align: center;
+  color: #d4a5ff;
+}
+
 @media (max-width: 900px) {
-  .area-contenido {
+  main {
     flex-direction: column;
     gap: 30px;
     padding: 20px;
+  }
+
+  #usuarios {
+    min-width: 100%;
+  }
+
+  #textoCondicional {
+    font-size: 1.5rem;
+    text-align: left;
   }
 }
