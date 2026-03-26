@@ -10,6 +10,11 @@
 }
 
 dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
     background: #1e1e2d;
     border-radius: 16px;
     padding: 30px;
@@ -18,14 +23,13 @@ dialog {
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.1);
     animation: modalIn 0.3s ease-out;
-    top: 5rem;
     z-index: 1000;
     color: white;
 }
 
 @keyframes modalIn {
-    from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 h2 {

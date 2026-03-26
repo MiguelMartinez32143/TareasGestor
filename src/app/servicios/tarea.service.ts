@@ -1,39 +1,27 @@
 import { Injectable } from '@angular/core';
-import { NuevaTareaInfo } from '../components/tarea/tarea.model';
+import { NuevaTareaInfo, tarea } from '../components/tarea/tarea.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TareaService {
 
-  private tareas = [
-    {
-      id: 't1',
-      idUsuario: 'u1',
-      titulo: 'Dominar Angular',
-      resumen: 'Apreder todas las características básicas y avanzasAngular cómo apicarlas.',
-      expira: '2026-04-14'
-    },
-    {
-      id: 't2',
-      idUsuario: 'u3',
-      titulo: 'Crear el primer prototipo',
-      resumen: 'Crear el primer prototipo del sitio web de la tienda',
-      expira: '2026-03-16',
-    },
-    {
-      id: 't3',
-      idUsuario: 'u3',
-      titulo: 'Preparar la plantilla del carrito',
-      resumen: 'Preparar y describir una plantilla de carrito de compras de la tienda online',
-      expira: '2026-03-30',
-    },
-  ]
+  private tareas: tarea[] = [];
 
   constructor() {
-    const tareas = localStorage.getItem('tareas')
-    if (tareas) {
-      this.tareas = JSON.parse(tareas);
+    this.cargarTareasDesdeBackend();
+  }
+
+  // GET: Cargar tareas del backend al iniciar
+  private async cargarTareasDesdeBackend() {
+    try {
+      const response = await fetch('http://localhost:3000/tareas');
+      if (response.ok) {
+        const datos = await response.json();
+        this.tareas = datos;
+      }
+    } catch (e) {
+      console.error('❌ Error al conectar con el backend (asegúrate de que está corriendo en el puerto 3000).', e);
     }
   }
 
@@ -41,24 +29,45 @@ export class TareaService {
     return this.tareas.filter((tarea) => tarea.idUsuario === idUsuario);
   }
 
-  agregarTarea(infoDeTarea: NuevaTareaInfo, idUsuario: string) {
-    this.tareas.unshift({
+  // POST: Agregar tarea
+  async agregarTarea(infoDeTarea: NuevaTareaInfo, idUsuario: string) {
+    const nuevaTarea: tarea = {
       id: new Date().getTime().toString(),
       titulo: infoDeTarea.titulo,
       resumen: infoDeTarea.resumen,
       expira: infoDeTarea.fecha,
       idUsuario: idUsuario
-    });
-    this.guardarTareas();
+    };
+    
+    // Lo guardamos localmente para repuesta visual inmediata
+    this.tareas.unshift(nuevaTarea);
+
+    // Lo enviamos a la Base de Datos usando el POST del backend
+    try {
+      await fetch('http://localhost:3000/tareas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nuevaTarea)
+      });
+    } catch (e) {
+      console.error('❌ Error guardando en backend', e);
+    }
   }
 
-  eliminarTarea(id: string) {
-    this.tareas = this.tareas.filter((tarea) => tarea.id !== id)
-    this.guardarTareas();
+  // DELETE: Eliminar tarea
+  async eliminarTarea(id: string) {
+    // Eliminamos de local para respuesta visual
+    this.tareas = this.tareas.filter((tarea) => tarea.id !== id);
+    
+    // Eliminamos de la base de datos MySQL
+    try {
+      await fetch(`http://localhost:3000/tareas/${id}`, {
+        method: 'DELETE'
+      });
+    } catch (e) {
+      console.error('❌ Error eliminando del backend', e);
+    }
   }
-
-  private guardarTareas() {
-    localStorage.setItem('tareas', JSON.stringify(this.tareas));
-  }
-
 }

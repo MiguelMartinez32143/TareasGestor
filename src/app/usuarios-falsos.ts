@@ -1,32 +1,32 @@
 export const USUARIOS_FALSOS = [
     {
         id: 'u1',
-        nombre: 'Antonia Céspedes',
-        avatar: 'usuario-1.png',
+        nombre: 'Valeria Montes',
+        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
     {
         id: 'u2',
-        nombre: 'Emilia Torres',
-        avatar: 'usuario-2.png',
+        nombre: 'Diego Navarro',
+        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
     },
     {
         id: 'u3',
-        nombre: 'Marcos Jeremías',
-        avatar: 'usuario-3.png',
+        nombre: 'Camila Rojas',
+        avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
     },
     {
         id: 'u4',
-        nombre: 'David Mercado',
-        avatar: 'usuario-4.png',
+        nombre: 'Mateo Sandoval',
+        avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
     },
     {
         id: 'u5',
-        nombre: 'Pamela Chan',
-        avatar: 'usuario-5.png',
+        nombre: 'Isabella Cruz',
+        avatar: 'https://randomuser.me/api/portraits/women/45.jpg',
     },
     {
         id: 'u6',
-        nombre: 'Adrián Serbio',
-        avatar: 'usuario-6.png',
+        nombre: 'Javier Delgado',
+        avatar: 'https://randomuser.me/api/portraits/men/60.jpg',
     },
 ];

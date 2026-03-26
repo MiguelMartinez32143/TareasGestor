@@ -5,9 +5,11 @@
 
 #tareas {
     min-height: 300px;
-    background: #392d54;
-    border-radius: 12px;
-    padding: 30px;
+    background: linear-gradient(135deg, rgba(57, 45, 84, 0.95), rgba(43, 31, 68, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 32px;
 }
 
 header {
@@ -32,22 +34,24 @@ menu {
 }
 
 menu button {
-    padding: 10px 22px;
-    border-radius: 6px;
+    padding: 12px 24px;
+    border-radius: 8px;
     border: none;
-    background: #b185ec;
+    background: linear-gradient(135deg, #c79eff, #b185ec);
     color: #2b114d;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
+    box-shadow: 0 4px 15px rgba(177, 133, 236, 0.3);
 }
 
 menu button:hover,
 menu button:active {
-    background: #9d6cd9;
+    background: linear-gradient(135deg, #d3b1ff, #bd96f9);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(177, 133, 236, 0.5);
 }
 
 ul {

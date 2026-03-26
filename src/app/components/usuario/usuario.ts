@@ -16,6 +16,9 @@ export class Usuario {
 
 
   get rutaImagen() {
+    if (this.usuario.avatar.startsWith('http')) {
+        return this.usuario.avatar;
+    }
     return 'img/' + this.usuario.avatar;
   }
 
