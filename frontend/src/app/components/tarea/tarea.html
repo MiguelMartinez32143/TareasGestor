@@ -1,0 +1,55 @@
+<app-tarjeta>
+    <article [ngClass]="{ 'completada': tarea.completada === 1 }">
+
+        <!-- ===== MODAL DE CONFIRMACIÓN DE BORRADO ===== -->
+        @if (mostrarConfirmacion) {
+        <div class="overlay" (click)="cancelarBorrado()"></div>
+        <div class="modal-confirmacion">
+            <p>¿Estás seguro de que deseas <strong>borrar</strong> esta tarea?</p>
+            <p>Esta acción no se puede deshacer.</p>
+            <div class="modal-acciones">
+                <button class="btn-cancelar" (click)="cancelarBorrado()">No, Cancelar</button>
+                <button class="btn-confirmar" (click)="confirmarBorrado()">Sí, Borrar</button>
+            </div>
+        </div>
+        }
+
+        <!-- ===== MODO EDICIÓN INLINE ===== -->
+        @if (editando) {
+        <div class="edicion-inline">
+            <label>Título</label>
+            <input type="text" [(ngModel)]="tituloEditado" />
+
+            <label>Resumen</label>
+            <textarea rows="3" [(ngModel)]="resumenEditado"></textarea>
+
+            <label>Fecha Límite</label>
+            <input type="date" [(ngModel)]="expiraEditado" />
+
+            <div class="edicion-acciones">
+                <button class="btn-guardar" (click)="alGuardarEdicion()">Guardar</button>
+                <button class="btn-cancelar-edicion" (click)="alCancelarEdicion()">Cancelar</button>
+            </div>
+        </div>
+        } @else {
+
+        <!-- ===== MODO NORMAL (LECTURA) ===== -->
+        <h2>{{ tarea.titulo }}</h2>
+        <time>{{ tarea.expira | date: 'fullDate'}}</time>
+        <p>{{ tarea.resumen }}</p>
+
+        <!-- --- INICIO CÓDIGO AÑADIDO: Botones solo en Modo Admin (RF-B2) --- -->
+        @if (esAdmin) {
+        <div class="acciones">
+            <button class="btn-terminar" (click)="alCompletarTarea()" [disabled]="tarea.completada === 1">
+                {{ tarea.completada === 1 ? '✔ Completada' : 'Terminar' }}
+            </button>
+            <button class="btn-editar" (click)="alEditarTarea()" [disabled]="tarea.completada === 1">Editar</button>
+            <button class="btn-borrar" (click)="alBorrarTarea()" [disabled]="tarea.completada === 1">Borrar</button>
+        </div>
+        }
+        <!-- --- FIN CÓDIGO AÑADIDO --- -->
+        }
+
+    </article>
+</app-tarjeta>

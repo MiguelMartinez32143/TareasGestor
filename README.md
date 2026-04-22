@@ -1,59 +1,71 @@
-# Gestor
+# Gestor de Tareas ADSO
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+Este proyecto es una aplicación FullStack para la gestión de tareas, con autenticación, persistencia en base de datos y un panel de administración.
 
-## Development server
+## Documentación de Requerimientos: Gestión de Usuarios Real
 
-To start a local development server, run:
+Este documento resume las especificaciones técnicas cumplidas durante la transición del sistema de usuarios estáticos a una arquitectura profesional basada en persistencia de datos.
 
-```bash
-ng serve
-```
+### 1. Requerimientos Funcionales (RF)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Los requerimientos funcionales definen los servicios que el sistema debe proporcionar y cómo debe reaccionar ante entradas particulares.
 
-## Code scaffolding
+| ID | Requerimiento | Descripción |
+|---|---|---|
+| **RF-01** | Persistencia de Datos (MySQL) | El sistema debe almacenar la información de los usuarios de forma permanente en una base de datos relacional, eliminando la dependencia de archivos de código estáticos (`USUARIOS_FALSOS`). |
+| **RF-02** | CRUD Completo de Usuarios | Se implementa una interfaz administrativa para Crear, Leer (Listar), Actualizar (nombre/avatar) y Eliminar usuarios del sistema. |
+| **RF-03** | Integridad Referencial | Toda tarea creada en el sistema debe estar obligatoriamente vinculada a un id de usuario válido existente en la tabla usuarios. |
+| **RF-04** | Gestión de Sesión para CRUD | Las funciones de escritura (POST, PUT, DELETE) sobre los usuarios deben ser accesibles únicamente por administradores autenticados mediante una sesión válida. |
+| **RF-05** | Gestión de Avatares Dinámicos | El sistema debe permitir asignar y modificar una imagen de perfil a cada usuario seleccionándola de un catálogo de activos del servidor. |
+| **RF-06** | Eliminación en Cascada | Al eliminar un usuario, el sistema debe limpiar automáticamente la base de datos eliminando todas las tareas que le pertenecen para evitar datos huérfanos. |
+| **RF-07** | Reactividad Automatizada | La interfaz de usuario debe utilizar Angular Signals para asegurar que los cambios realizados (creación/edición) se reflejen globalmente en la aplicación sin recargas manuales. |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 2. Requerimientos No Funcionales (RNF)
 
-```bash
-ng generate component component-name
-```
+Los requerimientos no funcionales se refieren a las propiedades del sistema y las restricciones bajo las cuales opera.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+| ID | Categoría | Requerimiento / Restricción |
+|---|---|---|
+| **RNF-01** | Seguridad | La comunicación entre el frontend y el backend debe estar protegida por un middleware de autenticación basado en Tokens JWT (JSON Web Token). |
+| **RNF-02** | Usabilidad | La interfaz de gestión debe ser tipo "Single Page Application" (SPA) con modales animados, desenfoque de fondo (backdrop-filter) y transiciones suaves para una experiencia premium. |
+| **RNF-03** | Robustez | El sistema debe incluir mecanismos de "fallback" para la interfaz. En caso de fallo en la carga de fuentes externas (como Google Fonts/Icons), se deben mostrar etiquetas en español legibles. |
+| **RNF-04** | Localización | El 100% de las etiquetas de usuario, mensajes de éxito, errores y placeholders deben estar en idioma Español. |
+| **RNF-05** | Escalabilidad | La arquitectura del backend debe ser capaz de manejar volúmenes crecientes de usuarios y tareas mediante el uso de comandos SQL optimizados. |
+| **RNF-06** | Disponibilidad | Se incluye un script de inicialización (`setup-db.js`) para asegurar que el entorno de base de datos se pueda replicar en cualquier host compatible con Node.js y MySQL de forma rápida. |
 
-```bash
-ng generate --help
-```
+## Guía de Instalación y Ejecución
 
-## Building
+### 1. Inicializar la Base de Datos
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Ejecute el script de inicialización para crear la base de datos `tareas_db`, las tablas necesarias (`administradores`, `usuarios`, `tareas`) y sembrar los datos iniciales.
 
 ```bash
-ng e2e
+cd backend
+node setup-db.js
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### 2. Iniciar el Backend
 
-## Additional Resources
+```bash
+cd backend
+npm install
+node index.js
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+El backend se ejecutará en `http://localhost:3000`.
+
+### 3. Iniciar el Frontend
+
+```bash
+cd frontend
+npm install
+ng serve -o
+```
+
+La aplicación Angular se abrirá automáticamente en `http://localhost:4200`.
+
+## Accesos por Defecto
+
+**Administrador:**
+- **Usuario:** `admin`
+- **Contraseña:** `admin123`

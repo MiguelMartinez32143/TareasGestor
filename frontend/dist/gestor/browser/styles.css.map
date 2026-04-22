@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/styles.css"],
+  "sourcesContent": ["/* Reset y estilos globales */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nhtml,\nbody {\n  width: 100%;\n  height: 100%;\n  font-family: \"Poppins\", system-ui, -apple-system, sans-serif;\n  overflow-x: hidden;\n}\n\nbody {\n  background: linear-gradient(135deg, #1a0033 0%, #2d0052 100%);\n  color: white;\n}\n\napp-root {\n  display: block;\n  width: 100%;\n  height: 100%;\n}"],
+  "mappings": ";AACA;AACE,UAAQ;AACR,WAAS;AACT,cAAY;AACd;AAEA;AACA;AACE,SAAO;AACP,UAAQ;AACR;AAAA,IAAa,SAAS;AAAA,IAAE,SAAS;AAAA,IAAE,aAAa;AAAA,IAAE;AAClD,cAAY;AACd;AAEA;AACE;AAAA,IAAY;AAAA,MAAgB,MAAhB;AAAA,MAAwB,QAAQ,EAAhC;AAAA,MAAoC,QAAQ;AACxD,SAAO;AACT;AAEA;AACE,WAAS;AACT,SAAO;AACP,UAAQ;AACV;",
+  "names": []
+}

@@ -1,0 +1,269 @@
+:host {
+    display: block;
+}
+
+article {
+    background: linear-gradient(145deg, #c5a0ec 0%, #bc95e7 100%);
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #2d1b4e;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    transition: opacity 0.4s ease;
+    position: relative;
+}
+
+/* ====== ESTADO COMPLETADA (OPACIDAD) ====== */
+article.completada {
+    opacity: 0.45;
+}
+
+article.completada .btn-terminar,
+article.completada .btn-editar,
+article.completada .btn-borrar {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: #2d1b4e;
+}
+
+time {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6a4f91;
+    letter-spacing: 0.5px;
+}
+
+p {
+    font-size: 1.05rem;
+    color: #2d1b4e;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ====== BOTONES DE ACCIONES ====== */
+.acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.acciones button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.btn-terminar {
+    background: #2b114d;
+    color: white;
+    box-shadow: 0 4px 12px rgba(43, 17, 77, 0.3);
+}
+.btn-terminar:hover:not(:disabled) {
+    background: #1c0a34;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(28, 10, 52, 0.4);
+}
+
+.btn-editar {
+    background: #3b3082;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 48, 130, 0.3);
+}
+.btn-editar:hover:not(:disabled) {
+    background: #2a2266;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(42, 34, 102, 0.4);
+}
+
+.btn-borrar {
+    background: #7a1c3a;
+    color: white;
+    box-shadow: 0 4px 12px rgba(122, 28, 58, 0.3);
+}
+.btn-borrar:hover:not(:disabled) {
+    background: #5e1230;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(94, 18, 48, 0.4);
+}
+
+/* ====== EDICIÓN INLINE ====== */
+.edicion-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edicion-inline label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #2d1b4e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.edicion-inline input,
+.edicion-inline textarea {
+    background: #1e1533;
+    color: #e0d0f5;
+    border: 1px solid rgba(186, 92, 255, 0.4);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+}
+
+.edicion-inline input:focus,
+.edicion-inline textarea:focus {
+    border-color: #ba5cff;
+    box-shadow: 0 0 10px rgba(186, 92, 255, 0.2);
+}
+
+.edicion-acciones {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+
+.btn-guardar {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    background: #2b8a3e;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(43, 138, 62, 0.3);
+}
+.btn-guardar:hover {
+    background: #237032;
+    transform: translateY(-2px);
+}
+
+.btn-cancelar-edicion {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(45, 27, 78, 0.6);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+.btn-cancelar-edicion:hover {
+    background: rgba(45, 27, 78, 0.9);
+    transform: translateY(-2px);
+}
+
+/* ====== MODAL DE CONFIRMACIÓN ====== */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+.modal-confirmacion {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1e1533;
+    border: 1px solid rgba(186, 92, 255, 0.3);
+    border-radius: 16px;
+    padding: 30px;
+    z-index: 1000;
+    color: #e0d0f5;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: modalIn 0.3s ease-out;
+    min-width: 320px;
+}
+
+.modal-confirmacion p {
+    color: #e0d0f5;
+    margin: 0 0 8px 0;
+}
+
+.modal-confirmacion p:first-child {
+    font-size: 1.1rem;
+}
+
+.modal-confirmacion p:nth-child(2) {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+.modal-acciones {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-acciones .btn-cancelar {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+.modal-acciones .btn-cancelar:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-acciones .btn-confirmar {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    background: #c0392b;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+}
+.modal-acciones .btn-confirmar:hover {
+    background: #a5321e;
+    transform: translateY(-2px);
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

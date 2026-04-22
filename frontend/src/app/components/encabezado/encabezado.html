@@ -1,0 +1,130 @@
+<header>
+    <!-- Logo con click para limpiar selección (RF-B1) -->
+    <img src="img/listado-tareas-logo.png" alt="Lista de Tareas"
+         class="logo-clickable" (click)="alClickLogo()" title="Volver al inicio">
+    <div>
+        <h1>TAREA FACIL</h1>
+        <p>Administrador de Tareas ADSO</p>
+    </div>
+
+    <div class="sesion-area">
+        @if (authService.isLoggedIn$ | async) {
+            <div class="sesion-activa">
+                <span class="admin-badge">&#x1f513; {{ authService.getAdmin()?.username }}</span>
+                <button class="btn-accion" (click)="abrirPerfil()" title="Editar perfil">&#x1f464; Perfil</button>
+                <button class="btn-accion btn-nuevo-admin" (click)="abrirAgregarAdmin()" title="Agregar administrador">&#x2795; Admin</button>
+                <button class="btn-accion btn-gestion-usuarios" (click)="abrirGestionUsuarios()" title="Gestionar usuarios">&#x1f465; Usuarios</button>
+                <button class="btn-logout" (click)="alCerrarSesion()">Cerrar Sesion</button>
+            </div>
+        } @else {
+            <button class="btn-login" (click)="toggleFormLogin()">
+                {{ mostrarFormLogin ? 'Cancelar' : '&#x1f512; Iniciar Sesion' }}
+            </button>
+        }
+    </div>
+</header>
+
+<!-- ===== MODAL LOGIN ===== -->
+@if (mostrarFormLogin) {
+<div class="modal-overlay" (click)="toggleFormLogin()"></div>
+<div class="modal-dropdown">
+    <h3>Acceso Administrador</h3>
+
+    @if (errorLogin) {
+    <p class="modal-error">{{ errorLogin }}</p>
+    }
+
+    <div class="modal-campo">
+        <label for="login-user">Usuario</label>
+        <input type="text" id="login-user" name="username"
+               [(ngModel)]="username" placeholder="admin"
+               (keydown.enter)="alIniciarSesion()" />
+    </div>
+
+    <div class="modal-campo">
+        <label for="login-pass">Contrasena</label>
+        <input type="password" id="login-pass" name="password"
+               [(ngModel)]="password" placeholder="••••••"
+               (keydown.enter)="alIniciarSesion()" />
+    </div>
+
+    <button class="btn-primario" (click)="alIniciarSesion()" [disabled]="cargandoLogin">
+        {{ cargandoLogin ? 'Ingresando...' : 'Ingresar' }}
+    </button>
+</div>
+}
+
+<!-- ===== MODAL PERFIL ===== -->
+@if (mostrarPerfil) {
+<div class="modal-overlay" (click)="cerrarPerfil()"></div>
+<div class="modal-dropdown">
+    <div class="modal-header">
+        <h3>&#x1f464; Editar Perfil</h3>
+        <button class="btn-cerrar-modal" (click)="cerrarPerfil()">&#x2715;</button>
+    </div>
+
+    @if (perfilMensaje) {
+    <p class="modal-exito">{{ perfilMensaje }}</p>
+    }
+    @if (perfilError) {
+    <p class="modal-error">{{ perfilError }}</p>
+    }
+
+    <div class="modal-campo">
+        <label for="perfil-user">Nuevo nombre de usuario</label>
+        <input type="text" id="perfil-user" name="perfilUsername"
+               [(ngModel)]="perfilUsername" placeholder="Nombre de usuario" />
+    </div>
+
+    <div class="modal-campo">
+        <label for="perfil-pass">Nueva contrasena</label>
+        <input type="password" id="perfil-pass" name="perfilPassword"
+               [(ngModel)]="perfilPassword" placeholder="Dejar vacio para no cambiar" />
+    </div>
+
+    <button class="btn-primario" (click)="alGuardarPerfil()" [disabled]="cargandoPerfil">
+        {{ cargandoPerfil ? 'Guardando...' : 'Guardar Cambios' }}
+    </button>
+</div>
+}
+
+<!-- ===== MODAL AGREGAR ADMIN ===== -->
+@if (mostrarAgregarAdmin) {
+<div class="modal-overlay" (click)="cerrarAgregarAdmin()"></div>
+<div class="modal-dropdown">
+    <div class="modal-header">
+        <h3>&#x2795; Nuevo Administrador</h3>
+        <button class="btn-cerrar-modal" (click)="cerrarAgregarAdmin()">&#x2715;</button>
+    </div>
+
+    @if (adminMensaje) {
+    <p class="modal-exito">{{ adminMensaje }}</p>
+    }
+    @if (adminError) {
+    <p class="modal-error">{{ adminError }}</p>
+    }
+
+    <div class="modal-campo">
+        <label for="nuevo-user">Usuario</label>
+        <input type="text" id="nuevo-user" name="nuevoUsername"
+               [(ngModel)]="nuevoUsername" placeholder="Nombre de usuario"
+               (keydown.enter)="alCrearAdmin()" />
+    </div>
+
+    <div class="modal-campo">
+        <label for="nuevo-pass">Contrasena</label>
+        <input type="password" id="nuevo-pass" name="nuevoPassword"
+               [(ngModel)]="nuevoPassword" placeholder="Contrasena"
+               (keydown.enter)="alCrearAdmin()" />
+    </div>
+
+    <button class="btn-primario" (click)="alCrearAdmin()" [disabled]="cargandoAdmin">
+        {{ cargandoAdmin ? 'Creando...' : 'Crear Administrador' }}
+    </button>
+</div>
+}
+
+<!-- ===== MODAL GESTIÓN DE USUARIOS (RF-02) ===== -->
+@if (mostrarGestionUsuarios) {
+    <app-gestion-usuarios (cerrar)="cerrarGestionUsuarios()" />
+}

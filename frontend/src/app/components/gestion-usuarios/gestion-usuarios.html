@@ -1,0 +1,144 @@
+<!-- ===== OVERLAY ===== -->
+<div class="gu-overlay" (click)="alCerrar()"></div>
+
+<!-- ===== MODAL PRINCIPAL ===== -->
+<div class="gu-modal">
+
+    <!-- Encabezado del modal -->
+    <div class="gu-header">
+        <h3>
+            @if (vistaActual === 'lista') {
+                <span class="gu-icon">👥</span> Gestionar Usuarios
+            } @else if (vistaActual === 'crear') {
+                <span class="gu-icon">➕</span> Crear Usuario
+            } @else {
+                <span class="gu-icon">✏️</span> Editar Usuario
+            }
+        </h3>
+        <button class="gu-btn-cerrar" (click)="alCerrar()" title="Cerrar">✕</button>
+    </div>
+
+    <!-- Mensajes -->
+    @if (mensaje) {
+    <div class="gu-msg-exito">{{ mensaje }}</div>
+    }
+    @if (error) {
+    <div class="gu-msg-error">{{ error }}</div>
+    }
+
+    <!-- ===== VISTA: LISTA DE USUARIOS ===== -->
+    @if (vistaActual === 'lista') {
+
+        <button class="gu-btn-crear" (click)="irACrear()">
+            <span class="gu-icon-sm">➕</span> Crear Nuevo Usuario
+        </button>
+
+        @if (cargando) {
+            <div class="gu-cargando">Cargando usuarios...</div>
+        } @else {
+            <ul class="gu-lista">
+                @for (usuario of usuarios; track usuario.id) {
+                <li class="gu-item">
+                    <div class="gu-item-info">
+                        <img [src]="obtenerRutaAvatar(usuario.avatar)"
+                             [alt]="usuario.nombre"
+                             class="gu-avatar" />
+                        <div class="gu-item-datos">
+                            <span class="gu-nombre">{{ usuario.nombre }}</span>
+                            <span class="gu-id">ID: {{ usuario.id }}</span>
+                        </div>
+                    </div>
+
+                    @if (idConfirmarEliminar === usuario.id) {
+                        <!-- Confirmación de eliminación -->
+                        <div class="gu-confirmar">
+                            <span class="gu-confirmar-texto">Se eliminarán también sus tareas</span>
+                            <button class="gu-btn-confirmar-si" (click)="confirmarEliminacion(usuario.id)">Sí, eliminar</button>
+                            <button class="gu-btn-confirmar-no" (click)="cancelarEliminacion()">Cancelar</button>
+                        </div>
+                    } @else {
+                        <div class="gu-item-acciones">
+                            <button class="gu-btn-editar" (click)="irAEditar(usuario)" title="Editar usuario">
+                                <span>Editar</span>
+                            </button>
+                            <button class="gu-btn-eliminar" (click)="pedirConfirmacion(usuario.id)" title="Eliminar usuario">
+                                <span>Eliminar</span>
+                            </button>
+                        </div>
+                    }
+                </li>
+                } @empty {
+                    <li class="gu-vacio">No hay usuarios registrados.</li>
+                }
+            </ul>
+        }
+
+    }
+
+    <!-- ===== VISTA: CREAR USUARIO ===== -->
+    @if (vistaActual === 'crear') {
+
+        <div class="gu-form">
+            <div class="gu-campo">
+                <label for="gu-nuevo-nombre">Nombre del usuario</label>
+                <input type="text" id="gu-nuevo-nombre"
+                       [(ngModel)]="nuevoNombre"
+                       placeholder="Ej: María García"
+                       (keydown.enter)="alCrearUsuario()" />
+            </div>
+
+            <div class="gu-campo">
+                <label>Seleccionar avatar</label>
+                <div class="gu-avatar-grid">
+                    @for (av of avatares; track av) {
+                    <button class="gu-avatar-opcion"
+                            [class.seleccionado]="nuevoAvatar === av"
+                            (click)="seleccionarAvatar(av, 'crear')">
+                        <img [src]="obtenerRutaAvatar(av)" [alt]="av" />
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <div class="gu-form-acciones">
+                <button class="gu-btn-secundario" (click)="irALista()">Volver</button>
+                <button class="gu-btn-primario" (click)="alCrearUsuario()">Crear Usuario</button>
+            </div>
+        </div>
+
+    }
+
+    <!-- ===== VISTA: EDITAR USUARIO ===== -->
+    @if (vistaActual === 'editar') {
+
+        <div class="gu-form">
+            <div class="gu-campo">
+                <label for="gu-editar-nombre">Nombre del usuario</label>
+                <input type="text" id="gu-editar-nombre"
+                       [(ngModel)]="editarNombre"
+                       placeholder="Nombre del usuario"
+                       (keydown.enter)="alGuardarEdicion()" />
+            </div>
+
+            <div class="gu-campo">
+                <label>Seleccionar avatar</label>
+                <div class="gu-avatar-grid">
+                    @for (av of avatares; track av) {
+                    <button class="gu-avatar-opcion"
+                            [class.seleccionado]="editarAvatar === av"
+                            (click)="seleccionarAvatar(av, 'editar')">
+                        <img [src]="obtenerRutaAvatar(av)" [alt]="av" />
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <div class="gu-form-acciones">
+                <button class="gu-btn-secundario" (click)="irALista()">Volver</button>
+                <button class="gu-btn-primario" (click)="alGuardarEdicion()">Guardar Cambios</button>
+            </div>
+        </div>
+
+    }
+
+</div>

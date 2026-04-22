@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/tarjeta/tarjeta.css"],
+  "sourcesContent": [":host {\n    display: block;\n}\n\ndiv {\n    border-radius: 12px;\n    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);\n    overflow: hidden;\n    transition: all 0.3s ease;\n}\n\ndiv:hover {\n    transform: translateY(-3px);\n    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);\n}"],
+  "mappings": ";AAAA;AACI,WAAS;AACb;AAEA;AACI,iBAAe;AACf,cAAY,EAAE,IAAI,KAAK,KAAK,CAAC,EAAE,CAAC,EAAE,CAAC,EAAE;AACrC,YAAU;AACV,cAAY,IAAI,KAAK;AACzB;AAEA,GAAG;AACC,aAAW,WAAW;AACtB,cAAY,EAAE,KAAK,KAAK,KAAK,CAAC,EAAE,CAAC,EAAE,CAAC,EAAE;AAC1C;",
+  "names": []
+}

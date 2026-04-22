@@ -1,0 +1,34 @@
+@if (estaAgregandoTareaNueva) {
+<app-nueva-tarea [idUsuario]="idUsuario" (cerrar)="alCerrarTareaNueva()" />
+}
+
+<section id="tareas">
+    <header>
+        <h2>Tareas de {{ nombre }}</h2>
+        <!-- --- INICIO CÓDIGO AÑADIDO: Botón solo visible en Modo Admin --- -->
+        @if (authService.isLoggedIn$ | async) {
+        <menu>
+            <button (click)="alIniciarNuevaTarea()">Agregar Tarea Nueva</button>
+        </menu>
+        }
+        <!-- --- FIN CÓDIGO AÑADIDO --- -->
+    </header>
+
+    <!-- --- INICIO CÓDIGO AÑADIDO: Skeletons de carga --- -->
+    @if (cargando) {
+    <ul>
+        <li><div class="skeleton-card"><div class="skeleton-titulo"></div><div class="skeleton-fecha"></div><div class="skeleton-resumen"></div></div></li>
+        <li><div class="skeleton-card"><div class="skeleton-titulo"></div><div class="skeleton-fecha"></div><div class="skeleton-resumen"></div></div></li>
+        <li><div class="skeleton-card"><div class="skeleton-titulo"></div><div class="skeleton-fecha"></div><div class="skeleton-resumen"></div></div></li>
+    </ul>
+    } @else {
+    <!-- --- FIN CÓDIGO AÑADIDO --- -->
+    <ul>
+        @for (tarea of tareasUsuarioSeleccionado; track tarea.id) {
+        <li>
+            <app-tarea [tarea]="tarea" />
+        </li>
+        }
+    </ul>
+    }
+</section>
