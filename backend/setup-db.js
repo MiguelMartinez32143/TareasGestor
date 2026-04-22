@@ -6,6 +6,7 @@
 // para que el sistema funcione en cualquier host con Node.js y MySQL.
 // ==========================================
 
+require('dotenv').config();
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 
