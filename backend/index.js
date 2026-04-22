@@ -33,6 +33,9 @@ app.use(express.json()); // permite recibir JSON
 let db;
 const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.DB_URL;
 
+// Debug: Imprimir las llaves disponibles (sin mostrar valores por seguridad)
+console.log('🔑 Variables de entorno disponibles:', Object.keys(process.env).filter(k => k.includes('MYSQL') || k.includes('DB') || k.includes('PASS')));
+
 if (dbUrl) {
     // Si el entorno provee una URL de conexión completa
     console.log('🔗 Conectando a la BD usando URL de conexión...');
@@ -41,9 +44,9 @@ if (dbUrl) {
     // Variables por separado buscando los nombres más comunes en cualquier hosting
     console.log('🔗 Conectando a la BD usando variables por separado...');
     db = mysql.createConnection({
-        host: process.env.MYSQLHOST || process.env.DB_HOST || process.env.DATABASE_HOST || 'localhost',
-        user: process.env.MYSQLUSER || process.env.DB_USER || process.env.DATABASE_USER || 'root',
-        password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD || '',
+        host: process.env.MYSQLHOST || process.env.DB_HOST || process.env.DATABASE_HOST || process.env.HOST || 'localhost',
+        user: process.env.MYSQLUSER || process.env.DB_USER || process.env.DATABASE_USER || process.env.USER || 'root',
+        password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD || process.env.PASSWORD || '',
         database: process.env.MYSQLDATABASE || process.env.DB_NAME || process.env.DATABASE_NAME || 'tareas_db',
         port: process.env.MYSQLPORT || process.env.DB_PORT || process.env.DATABASE_PORT || 3306
     });
