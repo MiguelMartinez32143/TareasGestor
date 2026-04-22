@@ -2,16 +2,16 @@
   display: block;
   width: 100%;
   min-height: 100vh;
-  background: #120a1f;
 }
 
 main {
   width: 100%;
   display: flex;
   flex: 1;
-  gap: 40px;
-  padding: 40px 60px;
+  gap: 32px;
+  padding: 32px 48px;
   align-items: flex-start;
+  animation: fadeIn 0.4s ease;
 }
 
 #usuarios {
@@ -20,24 +20,56 @@ main {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   min-width: 260px;
   flex-shrink: 0;
 }
 
 #textoCondicional {
-  font-weight: bold;
-  font-size: 1.15rem;
+  font-weight: 600;
+  font-size: 1.1rem;
   margin: 0;
   text-align: center;
-  color: #d4a5ff;
+  color: var(--color-text-muted);
+  flex: 1;
+  padding: 60px 20px;
 }
 
-@media (max-width: 900px) {
+/* ✅ TASK-09: Skeleton de carga para lista de usuarios */
+.skeleton-usuario {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.skeleton-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-surface) 50%, var(--color-surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.skeleton-nombre {
+  height: 14px;
+  width: 120px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-surface) 50%, var(--color-surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
   main {
     flex-direction: column;
-    gap: 30px;
-    padding: 20px;
+    gap: 24px;
+    padding: 16px;
   }
 
   #usuarios {
@@ -45,7 +77,8 @@ main {
   }
 
   #textoCondicional {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: left;
+    padding: 30px 10px;
   }
 }

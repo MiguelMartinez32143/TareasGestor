@@ -1,12 +1,24 @@
 <app-encabezado (logoClick)="alClickLogo()" />
 
 <main>
+  <!-- ✅ TASK-09: Skeleton de carga para lista de usuarios — agregado por auditoría -->
   <ul id="usuarios">
-    @for (usuario of usuarios; track usuario.id) {
-    <li>
-      <app-usuario [seleccionado]="usuario.id === idUsuarioSeleccionado" [usuario]="usuario"
-        (seleccion)="alSeleccionarUsuario($event)" />
-    </li>
+    @if (cargandoUsuarios) {
+      @for (i of [1,2,3,4,5,6]; track i) {
+      <li>
+        <div class="skeleton-usuario">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-nombre"></div>
+        </div>
+      </li>
+      }
+    } @else {
+      @for (usuario of usuarios; track usuario.id) {
+      <li>
+        <app-usuario [seleccionado]="usuario.id === idUsuarioSeleccionado" [usuario]="usuario"
+          (seleccion)="alSeleccionarUsuario($event)" />
+      </li>
+      }
     }
   </ul>
 

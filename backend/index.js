@@ -116,6 +116,7 @@ db.connect((err) => {
     )`;
 
     // Auto-crear tabla tareas si no existe
+    // ✅ TASK-11/TASK-12: FK con ON DELETE CASCADE para integridad referencial — agregado por auditoría
     const crearTablaTareas = `
     CREATE TABLE IF NOT EXISTS tareas (
         id VARCHAR(50) PRIMARY KEY,
@@ -123,8 +124,10 @@ db.connect((err) => {
         resumen TEXT,
         expira VARCHAR(50),
         idUsuario VARCHAR(10) NOT NULL,
-        completada TINYINT DEFAULT 0
-    )`;
+        completada TINYINT DEFAULT 0,
+        INDEX idx_idUsuario (idUsuario),
+        FOREIGN KEY (idUsuario) REFERENCES usuarios(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`;
 
     db.query(crearTablaAdmins, (err) => {
         if (err) {

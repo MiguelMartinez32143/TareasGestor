@@ -23,6 +23,11 @@ export class App {
     return this.usuarioService.usuarios();
   }
 
+  // ✅ TASK-09: Skeleton de carga para lista de usuarios — agregado por auditoría
+  get cargandoUsuarios() {
+    return this.usuarioService.cargando();
+  }
+
   get usuarioSeleccionado() {
     return this.usuarios.find((usuario) => usuario.id === this.idUsuarioSeleccionado);
   }

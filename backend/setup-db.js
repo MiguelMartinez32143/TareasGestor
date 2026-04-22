@@ -65,6 +65,7 @@ function crearTablas() {
         avatar VARCHAR(255) NOT NULL DEFAULT 'usuario-1.png'
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
 
+    // ✅ TASK-11/TASK-12: FK con ON DELETE CASCADE para integridad referencial — agregado por auditoría
     const tablaTareas = `
     CREATE TABLE IF NOT EXISTS tareas (
         id VARCHAR(50) PRIMARY KEY,
@@ -73,7 +74,8 @@ function crearTablas() {
         expira VARCHAR(50),
         idUsuario VARCHAR(10) NOT NULL,
         completada TINYINT DEFAULT 0,
-        INDEX idx_idUsuario (idUsuario)
+        INDEX idx_idUsuario (idUsuario),
+        FOREIGN KEY (idUsuario) REFERENCES usuarios(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
 
     // Ejecutar en secuencia
