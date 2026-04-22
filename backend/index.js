@@ -30,13 +30,20 @@ app.use(express.json()); // permite recibir JSON
 // ==========================================
 // CONEXIÓN MYSQL
 // ==========================================
-const db = mysql.createConnection({
-    host: process.env.MYSQLHOST || 'localhost',
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQLPASSWORD || '',
-    database: process.env.MYSQLDATABASE || 'tareas_db',
-    port: process.env.MYSQLPORT || 3306
-});
+let db;
+if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
+    // Si Railway provee una URL completa (ej: mysql://root:pass@host:port/db)
+    db = mysql.createConnection(process.env.MYSQL_URL || process.env.DATABASE_URL);
+} else {
+    // Si Railway provee las variables por separado
+    db = mysql.createConnection({
+        host: process.env.MYSQLHOST || 'localhost',
+        user: process.env.MYSQLUSER || 'root',
+        password: process.env.MYSQLPASSWORD || '',
+        database: process.env.MYSQLDATABASE || 'tareas_db',
+        port: process.env.MYSQLPORT || 3306
+    });
+}
 
 // ==========================================
 // CATÁLOGO DE AVATARES DISPONIBLES (RF-05)
