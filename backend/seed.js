@@ -15,8 +15,22 @@ async function seedAdmin(db) {
             const total = results[0].total;
 
             if (total > 0) {
-                console.log('ℹ️  La tabla administradores ya tiene registros. Seed omitido.');
-                return resolve();
+                // Admin ya existe: actualizar contraseña para asegurar acceso
+                try {
+                    const hashPassword = await bcrypt.hash('admin123', 10);
+                    db.query('UPDATE administradores SET password = ? WHERE username = ?', [hashPassword, 'admin'], (err) => {
+                        if (err) {
+                            console.error('❌ Error actualizando password:', err.message);
+                            return reject(err);
+                        }
+                        console.log('✅ Password del admin actualizada a: admin123');
+                        resolve();
+                    });
+                } catch (hashErr) {
+                    console.error('❌ Error hasheando password:', hashErr.message);
+                    reject(hashErr);
+                }
+                return;
             }
 
             // Tabla vacía → crear admin inicial
