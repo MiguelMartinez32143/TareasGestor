@@ -18,10 +18,18 @@ const { seedAdmin } = require('./seed');
 const app = express();
 
 app.use(cors({
-    origin: [
-        'http://localhost:4200',
-        process.env.CORS_ORIGIN_PROD
-    ].filter(Boolean),
+    origin: function (origin, callback) {
+        // Permitir peticiones sin origin (Postman, curl, etc.)
+        if (!origin) return callback(null, true);
+        // Permitir localhost para desarrollo
+        if (origin.includes('localhost')) return callback(null, true);
+        // Permitir cualquier subdominio de Vercel
+        if (origin.endsWith('.vercel.app')) return callback(null, true);
+        // Permitir la URL explícita de producción si está configurada
+        if (process.env.CORS_ORIGIN_PROD && origin === process.env.CORS_ORIGIN_PROD) return callback(null, true);
+        // Bloquear el resto
+        callback(new Error('No permitido por CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
