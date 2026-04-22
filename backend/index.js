@@ -28,20 +28,24 @@ app.use(cors({
 app.use(express.json()); // permite recibir JSON
 
 // ==========================================
-// CONEXIÓN MYSQL
+// CONEXIÓN MYSQL (SOPORTE UNIVERSAL)
 // ==========================================
 let db;
-if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
-    // Si Railway provee una URL completa (ej: mysql://root:pass@host:port/db)
-    db = mysql.createConnection(process.env.MYSQL_URL || process.env.DATABASE_URL);
+const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.DB_URL;
+
+if (dbUrl) {
+    // Si el entorno provee una URL de conexión completa
+    console.log('🔗 Conectando a la BD usando URL de conexión...');
+    db = mysql.createConnection(dbUrl);
 } else {
-    // Si Railway provee las variables por separado
+    // Variables por separado buscando los nombres más comunes en cualquier hosting
+    console.log('🔗 Conectando a la BD usando variables por separado...');
     db = mysql.createConnection({
-        host: process.env.MYSQLHOST || 'localhost',
-        user: process.env.MYSQLUSER || 'root',
-        password: process.env.MYSQLPASSWORD || '',
-        database: process.env.MYSQLDATABASE || 'tareas_db',
-        port: process.env.MYSQLPORT || 3306
+        host: process.env.MYSQLHOST || process.env.DB_HOST || process.env.DATABASE_HOST || 'localhost',
+        user: process.env.MYSQLUSER || process.env.DB_USER || process.env.DATABASE_USER || 'root',
+        password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD || '',
+        database: process.env.MYSQLDATABASE || process.env.DB_NAME || process.env.DATABASE_NAME || 'tareas_db',
+        port: process.env.MYSQLPORT || process.env.DB_PORT || process.env.DATABASE_PORT || 3306
     });
 }
 
