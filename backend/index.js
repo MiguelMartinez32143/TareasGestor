@@ -78,6 +78,19 @@ const AVATARES_CATALOGO = [
     '6.jpg'
 ];
 
+// Health check (Railway necesita esto para verificar que el servidor responde)
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Capturar errores no manejados que podrían crashear el proceso silenciosamente
+process.on('uncaughtException', (err) => {
+    console.error('💥 UNCAUGHT EXCEPTION:', err);
+});
+process.on('unhandledRejection', (err) => {
+    console.error('💥 UNHANDLED REJECTION:', err);
+});
+
 // CONECTAR
 db.connect((err) => {
     if (err) {
