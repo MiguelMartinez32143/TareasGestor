@@ -1,4 +1,5 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Usuarios } from '../components/usuario/usuario.model';
 import { environment } from '../../environments/environment';
@@ -10,6 +11,7 @@ export class UsuarioService {
 
   private readonly API_URL = environment.apiUrl;
   private http = inject(HttpClient);
+  private platformId = inject(PLATFORM_ID);
 
   // Angular Signal para reactividad global (RF-07)
   private _usuarios = signal<Usuarios[]>([]);
@@ -24,8 +26,13 @@ export class UsuarioService {
   readonly avatares = signal<string[]>([]);
 
   constructor() {
-    this.cargarUsuarios();
-    this.cargarAvatares();
+    // Solo hacer llamadas HTTP en el navegador, no durante SSR/prerendering
+    if (isPlatformBrowser(this.platformId)) {
+      this.cargarUsuarios();
+      this.cargarAvatares();
+    } else {
+      this.cargando.set(false);
+    }
   }
 
   // GET: Cargar todos los usuarios desde el backend

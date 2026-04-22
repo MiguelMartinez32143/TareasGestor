@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { NuevaTareaInfo, tarea } from '../components/tarea/tarea.model';
 import { environment } from '../../environments/environment';
@@ -10,6 +11,7 @@ export class TareaService {
 
   private readonly API_URL = environment.apiUrl;
   private http = inject(HttpClient);
+  private platformId = inject(PLATFORM_ID);
   private tareas: tarea[] = [];
 
   // --- INICIO CÓDIGO AÑADIDO ---
@@ -17,7 +19,10 @@ export class TareaService {
   // --- FIN CÓDIGO AÑADIDO ---
 
   constructor() {
-    this.cargarTareasDesdeBackend();
+    // Solo hacer llamadas HTTP en el navegador, no durante SSR/prerendering
+    if (isPlatformBrowser(this.platformId)) {
+      this.cargarTareasDesdeBackend();
+    }
   }
 
   // GET: Cargar TODAS las tareas del backend (incluidas las completadas)
