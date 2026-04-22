@@ -193,7 +193,16 @@ app.post('/login', (req, res) => {
 
         const admin = results[0];
 
+        console.log('🔍 DEBUG LOGIN:', {
+            usernameRecibido: username,
+            usernameEnBD: admin.username,
+            passwordRecibido: password,
+            hashEnBD: admin.password?.substring(0, 20) + '...',
+        });
+
         const passwordValido = await bcrypt.compare(password, admin.password);
+
+        console.log('🔍 DEBUG bcrypt.compare resultado:', passwordValido);
 
         if (!passwordValido) {
             return res.status(401).json({ mensaje: 'Credenciales inválidas.' });
