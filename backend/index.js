@@ -28,10 +28,11 @@ app.use(express.json()); // permite recibir JSON
 // CONEXIÓN MYSQL
 // ==========================================
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '', // Aca se coloca contraseña en casa de que la bd tenga
-    database: 'tareas_db',
+    host: process.env.MYSQLHOST || 'localhost',
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQLDATABASE || 'tareas_db',
+    port: process.env.MYSQLPORT || 3306
 });
 
 // ==========================================
@@ -542,6 +543,7 @@ app.delete('/tareas/:id', validateToken, (req, res) => {
 // ==========================================
 // SERVIDOR
 // ==========================================
-app.listen(3000, () => {
-    console.log(' Servidor corriendo en http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(` Servidor corriendo en el puerto ${PORT}`);
 });
