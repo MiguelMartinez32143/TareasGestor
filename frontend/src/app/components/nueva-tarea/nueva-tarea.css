@@ -1,14 +1,10 @@
 .fondo {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
     z-index: 999;
-    animation: fadeIn 0.2s ease;
+    animation: overlayIn 0.15s ease;
 }
 
 dialog {
@@ -17,109 +13,97 @@ dialog {
     left: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
-    background: var(--color-surface);
+    background: var(--surface);
     border-radius: var(--radius-xl);
-    padding: 28px;
+    padding: 24px;
     width: 90%;
-    max-width: 480px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--color-border);
-    animation: modalIn 0.3s ease;
+    max-width: 440px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border);
+    animation: modalReveal 0.2s ease;
     z-index: 1000;
-    color: var(--color-text);
+    color: var(--text);
 }
 
 h2 {
     margin-top: 0;
-    margin-bottom: 24px;
-    font-size: 1.3rem;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--color-text);
+    color: var(--text);
 }
 
 label {
     display: block;
-    font-size: 0.82rem;
-    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    color: var(--text-dim);
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-input,
-textarea {
+input, textarea {
     width: 100%;
-    background: var(--color-surface-2);
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    color: var(--color-text);
-    font-family: var(--font-primary);
-    font-size: 0.95rem;
-    transition: all var(--transition-base);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.88rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 14px;
 }
 
 textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 90px;
 }
 
-input:focus,
-textarea:focus {
+input:focus, textarea:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--color-primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-soft);
 }
 
-input::placeholder,
-textarea::placeholder {
-    color: var(--color-text-muted);
-    opacity: 0.5;
+input::placeholder, textarea::placeholder {
+    color: var(--text-dim);
 }
 
 .acciones {
-    margin: 1rem 0 0;
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 8px;
+    margin-top: 4px;
 }
 
 button {
-    padding: 10px 20px;
-    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    font-size: 0.92rem;
-    transition: all var(--transition-base);
-    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    transition: all 0.15s ease;
+    font-family: var(--font);
 }
 
 button[type="button"] {
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
 }
-
-button[type="button"]:hover,
-button[type="button"]:active {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
+button[type="button"]:hover {
+    background: var(--surface-hover);
 }
 
 button[type="submit"] {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-success));
+    background: var(--primary);
     border: none;
     color: #fff;
     font-weight: 700;
 }
-
-button[type="submit"]:hover,
-button[type="submit"]:active {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-primary);
-    filter: brightness(1.1);
-}
-
-@media (min-width: 768px) {
-    dialog {
-        padding: 32px;
-    }
+button[type="submit"]:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 4px 14px rgba(129, 140, 248, 0.25);
 }

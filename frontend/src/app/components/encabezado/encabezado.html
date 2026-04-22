@@ -1,10 +1,10 @@
 <header>
-    <!-- Logo con click para limpiar selección (RF-B1) -->
-    <img src="img/listado-tareas-logo.png" alt="Lista de Tareas"
-         class="logo-clickable" (click)="alClickLogo()" title="Volver al inicio">
-    <div>
-        <h1>TAREA FACIL</h1>
-        <p>Administrador de Tareas ADSO</p>
+    <div class="header-brand" (click)="alClickLogo()">
+        <img src="img/listado-tareas-logo.png" alt="Lista de Tareas" class="logo-clickable" title="Volver al inicio">
+        <div class="header-titles">
+            <h1>TAREA FÁCIL</h1>
+            <p>Administrador de Tareas ADSO</p>
+        </div>
     </div>
 
     <div class="sesion-area">
@@ -12,13 +12,13 @@
             <div class="sesion-activa">
                 <span class="admin-badge">&#x1f513; {{ authService.getAdmin()?.username }}</span>
                 <button class="btn-accion" (click)="abrirPerfil()" title="Editar perfil">&#x1f464; Perfil</button>
-                <button class="btn-accion btn-nuevo-admin" (click)="abrirAgregarAdmin()" title="Agregar administrador">&#x2795; Admin</button>
+                <button class="btn-accion btn-nuevo-admin" (click)="abrirGestionAdmins()" title="Gestionar administradores">&#x1f6e1; Admins</button>
                 <button class="btn-accion btn-gestion-usuarios" (click)="abrirGestionUsuarios()" title="Gestionar usuarios">&#x1f465; Usuarios</button>
-                <button class="btn-logout" (click)="alCerrarSesion()">Cerrar Sesion</button>
+                <button class="btn-logout" (click)="alCerrarSesion()">Cerrar Sesión</button>
             </div>
         } @else {
             <button class="btn-login" (click)="toggleFormLogin()">
-                {{ mostrarFormLogin ? 'Cancelar' : '&#x1f512; Iniciar Sesion' }}
+                {{ mostrarFormLogin ? 'Cancelar' : '&#x1f512; Iniciar Sesión' }}
             </button>
         }
     </div>
@@ -42,7 +42,7 @@
     </div>
 
     <div class="modal-campo">
-        <label for="login-pass">Contrasena</label>
+        <label for="login-pass">Contraseña</label>
         <input type="password" id="login-pass" name="password"
                [(ngModel)]="password" placeholder="••••••"
                (keydown.enter)="alIniciarSesion()" />
@@ -77,9 +77,9 @@
     </div>
 
     <div class="modal-campo">
-        <label for="perfil-pass">Nueva contrasena</label>
+        <label for="perfil-pass">Nueva contraseña</label>
         <input type="password" id="perfil-pass" name="perfilPassword"
-               [(ngModel)]="perfilPassword" placeholder="Dejar vacio para no cambiar" />
+               [(ngModel)]="perfilPassword" placeholder="Dejar vacío para no cambiar" />
     </div>
 
     <button class="btn-primario" (click)="alGuardarPerfil()" [disabled]="cargandoPerfil">
@@ -88,39 +88,82 @@
 </div>
 }
 
-<!-- ===== MODAL AGREGAR ADMIN ===== -->
-@if (mostrarAgregarAdmin) {
-<div class="modal-overlay" (click)="cerrarAgregarAdmin()"></div>
-<div class="modal-dropdown">
+<!-- ===== MODAL GESTIÓN DE ADMINISTRADORES ===== -->
+@if (mostrarGestionAdmins) {
+<div class="modal-overlay" (click)="cerrarGestionAdmins()"></div>
+<div class="modal-dropdown modal-admins">
     <div class="modal-header">
-        <h3>&#x2795; Nuevo Administrador</h3>
-        <button class="btn-cerrar-modal" (click)="cerrarAgregarAdmin()">&#x2715;</button>
+        <h3>&#x1f6e1; Gestionar Administradores</h3>
+        <button class="btn-cerrar-modal" (click)="cerrarGestionAdmins()">&#x2715;</button>
     </div>
 
-    @if (adminMensaje) {
-    <p class="modal-exito">{{ adminMensaje }}</p>
+    @if (adminsMensaje) {
+    <p class="modal-exito">{{ adminsMensaje }}</p>
     }
-    @if (adminError) {
-    <p class="modal-error">{{ adminError }}</p>
+    @if (adminsError) {
+    <p class="modal-error">{{ adminsError }}</p>
     }
 
-    <div class="modal-campo">
-        <label for="nuevo-user">Usuario</label>
-        <input type="text" id="nuevo-user" name="nuevoUsername"
-               [(ngModel)]="nuevoUsername" placeholder="Nombre de usuario"
-               (keydown.enter)="alCrearAdmin()" />
+    <!-- Crear nuevo admin -->
+    <div class="admin-crear-section">
+        <h4>Agregar nuevo</h4>
+        <div class="admin-crear-form">
+            <input type="text" [(ngModel)]="nuevoUsername" placeholder="Usuario"
+                   (keydown.enter)="alCrearAdmin()" />
+            <input type="password" [(ngModel)]="nuevoPassword" placeholder="Contraseña"
+                   (keydown.enter)="alCrearAdmin()" />
+            <button class="btn-crear-inline" (click)="alCrearAdmin()">+</button>
+        </div>
     </div>
 
-    <div class="modal-campo">
-        <label for="nuevo-pass">Contrasena</label>
-        <input type="password" id="nuevo-pass" name="nuevoPassword"
-               [(ngModel)]="nuevoPassword" placeholder="Contrasena"
-               (keydown.enter)="alCrearAdmin()" />
+    <!-- Lista de admins -->
+    <div class="admin-list-section">
+        <h4>Administradores actuales</h4>
+        @if (cargandoAdmins) {
+            <p class="admin-loading">Cargando...</p>
+        } @else {
+            @for (admin of listaAdmins; track admin.id) {
+            <div class="admin-item" [class.admin-editando]="editandoAdminId === admin.id">
+                @if (editandoAdminId === admin.id) {
+                    <!-- Modo edición -->
+                    <div class="admin-edit-form">
+                        <input type="text" [(ngModel)]="editAdminUsername" placeholder="Nuevo username" />
+                        <input type="password" [(ngModel)]="editAdminPassword" placeholder="Nueva contraseña (opc.)" />
+                        <div class="admin-edit-actions">
+                            <button class="btn-save-sm" (click)="alGuardarEdicionAdmin()">Guardar</button>
+                            <button class="btn-cancel-sm" (click)="cancelarEdicionAdmin()">Cancelar</button>
+                        </div>
+                    </div>
+                } @else if (confirmarEliminarId === admin.id) {
+                    <!-- Confirmar eliminación -->
+                    <div class="admin-confirm-delete">
+                        <span>¿Eliminar a <strong>{{ admin.username }}</strong>?</span>
+                        <div class="admin-edit-actions">
+                            <button class="btn-danger-sm" (click)="confirmarEliminacionAdmin(admin.id)">Sí</button>
+                            <button class="btn-cancel-sm" (click)="cancelarEliminacion()">No</button>
+                        </div>
+                    </div>
+                } @else {
+                    <!-- Vista normal -->
+                    <div class="admin-info">
+                        <span class="admin-username">{{ admin.username }}</span>
+                        @if (esAdminActual(admin.id)) {
+                            <span class="admin-you-badge">tú</span>
+                        }
+                    </div>
+                    <div class="admin-actions">
+                        <button class="btn-edit-sm" (click)="iniciarEdicionAdmin(admin)" title="Editar">✏️</button>
+                        @if (!esAdminActual(admin.id)) {
+                            <button class="btn-delete-sm" (click)="pedirConfirmacionEliminar(admin.id)" title="Eliminar">🗑️</button>
+                        }
+                    </div>
+                }
+            </div>
+            } @empty {
+                <p class="admin-loading">No hay administradores.</p>
+            }
+        }
     </div>
-
-    <button class="btn-primario" (click)="alCrearAdmin()" [disabled]="cargandoAdmin">
-        {{ cargandoAdmin ? 'Creando...' : 'Crear Administrador' }}
-    </button>
 </div>
 }
 

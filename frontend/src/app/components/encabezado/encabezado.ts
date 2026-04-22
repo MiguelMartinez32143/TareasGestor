@@ -32,13 +32,21 @@ export class Encabezado {
   perfilError = '';
   cargandoPerfil = false;
 
-  // Agregar Admin
-  mostrarAgregarAdmin = false;
+  // Gestión de Administradores
+  mostrarGestionAdmins = false;
+  listaAdmins: { id: number; username: string }[] = [];
+  cargandoAdmins = false;
+  adminsMensaje = '';
+  adminsError = '';
+  // Crear nuevo admin
   nuevoUsername = '';
   nuevoPassword = '';
-  adminMensaje = '';
-  adminError = '';
-  cargandoAdmin = false;
+  // Editar admin
+  editandoAdminId: number | null = null;
+  editAdminUsername = '';
+  editAdminPassword = '';
+  // Confirmar eliminación
+  confirmarEliminarId: number | null = null;
 
   // Gestión de Usuarios (RF-02)
   mostrarGestionUsuarios = false;
@@ -91,7 +99,7 @@ export class Encabezado {
     this.perfilMensaje = '';
     this.perfilError = '';
     this.mostrarPerfil = true;
-    this.mostrarAgregarAdmin = false;
+    this.mostrarGestionAdmins = false;
     this.mostrarGestionUsuarios = false;
   }
 
@@ -127,42 +135,128 @@ export class Encabezado {
     });
   }
 
-  // ========== AGREGAR ADMIN ==========
-  abrirAgregarAdmin() {
-    this.nuevoUsername = '';
-    this.nuevoPassword = '';
-    this.adminMensaje = '';
-    this.adminError = '';
-    this.mostrarAgregarAdmin = true;
+  // ========== GESTIÓN DE ADMINISTRADORES ==========
+  abrirGestionAdmins() {
+    this.mostrarGestionAdmins = true;
     this.mostrarPerfil = false;
     this.mostrarGestionUsuarios = false;
+    this.adminsMensaje = '';
+    this.adminsError = '';
+    this.editandoAdminId = null;
+    this.confirmarEliminarId = null;
+    this.nuevoUsername = '';
+    this.nuevoPassword = '';
+    this.cargarAdmins();
   }
 
-  cerrarAgregarAdmin() {
-    this.mostrarAgregarAdmin = false;
+  cerrarGestionAdmins() {
+    this.mostrarGestionAdmins = false;
+  }
+
+  cargarAdmins() {
+    this.cargandoAdmins = true;
+    this.authService.listarAdmins().subscribe({
+      next: (admins) => {
+        this.listaAdmins = admins;
+        this.cargandoAdmins = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.adminsError = 'Error al cargar administradores.';
+        this.cargandoAdmins = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   alCrearAdmin() {
     if (!this.nuevoUsername || !this.nuevoPassword) {
-      this.adminError = 'Complete ambos campos.';
+      this.adminsError = 'Complete ambos campos.';
       return;
     }
 
-    this.cargandoAdmin = true;
-    this.adminError = '';
-    this.adminMensaje = '';
-
+    this.adminsError = '';
     this.authService.crearAdmin(this.nuevoUsername, this.nuevoPassword).subscribe({
       next: (res) => {
-        this.adminMensaje = res.mensaje;
+        this.adminsMensaje = res.mensaje;
         this.nuevoUsername = '';
         this.nuevoPassword = '';
-        this.cargandoAdmin = false;
+        this.cargarAdmins();
         this.cdr.markForCheck();
+        setTimeout(() => { this.adminsMensaje = ''; this.cdr.markForCheck(); }, 2000);
       },
       error: (err) => {
-        this.adminError = err.error?.mensaje || 'Error al crear administrador.';
-        this.cargandoAdmin = false;
+        this.adminsError = err.error?.mensaje || 'Error al crear administrador.';
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  iniciarEdicionAdmin(admin: { id: number; username: string }) {
+    this.editandoAdminId = admin.id;
+    this.editAdminUsername = admin.username;
+    this.editAdminPassword = '';
+    this.adminsError = '';
+    this.adminsMensaje = '';
+  }
+
+  cancelarEdicionAdmin() {
+    this.editandoAdminId = null;
+  }
+
+  alGuardarEdicionAdmin() {
+    if (!this.editAdminUsername && !this.editAdminPassword) {
+      this.adminsError = 'Ingrese al menos un campo.';
+      return;
+    }
+
+    this.adminsError = '';
+    this.authService.editarAdmin(
+      this.editandoAdminId!,
+      this.editAdminUsername || undefined,
+      this.editAdminPassword || undefined
+    ).subscribe({
+      next: (res) => {
+        this.adminsMensaje = res.mensaje;
+        this.editandoAdminId = null;
+        this.cargarAdmins();
+
+        // Si editó su propio admin, actualizar localStorage
+        const me = this.authService.getAdmin();
+        if (me && me.id === this.editandoAdminId && res.admin) {
+          localStorage.setItem('admin', JSON.stringify(res.admin));
+        }
+        this.cdr.markForCheck();
+        setTimeout(() => { this.adminsMensaje = ''; this.cdr.markForCheck(); }, 2000);
+      },
+      error: (err) => {
+        this.adminsError = err.error?.mensaje || 'Error al editar administrador.';
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  pedirConfirmacionEliminar(id: number) {
+    this.confirmarEliminarId = id;
+  }
+
+  cancelarEliminacion() {
+    this.confirmarEliminarId = null;
+  }
+
+  confirmarEliminacionAdmin(id: number) {
+    this.adminsError = '';
+    this.authService.eliminarAdmin(id).subscribe({
+      next: (res) => {
+        this.adminsMensaje = res.mensaje;
+        this.confirmarEliminarId = null;
+        this.cargarAdmins();
+        this.cdr.markForCheck();
+        setTimeout(() => { this.adminsMensaje = ''; this.cdr.markForCheck(); }, 2000);
+      },
+      error: (err) => {
+        this.adminsError = err.error?.mensaje || 'Error al eliminar.';
+        this.confirmarEliminarId = null;
         this.cdr.markForCheck();
       }
     });
@@ -172,7 +266,7 @@ export class Encabezado {
   abrirGestionUsuarios() {
     this.mostrarGestionUsuarios = true;
     this.mostrarPerfil = false;
-    this.mostrarAgregarAdmin = false;
+    this.mostrarGestionAdmins = false;
   }
 
   cerrarGestionUsuarios() {
@@ -180,10 +274,14 @@ export class Encabezado {
   }
 
   // ========== UTILIDADES ==========
+  esAdminActual(id: number): boolean {
+    return this.authService.getAdmin()?.id === id;
+  }
+
   cerrarTodosLosModales() {
     this.mostrarFormLogin = false;
     this.mostrarPerfil = false;
-    this.mostrarAgregarAdmin = false;
+    this.mostrarGestionAdmins = false;
     this.mostrarGestionUsuarios = false;
   }
 }

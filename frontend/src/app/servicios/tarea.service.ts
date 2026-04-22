@@ -70,8 +70,20 @@ export class TareaService {
       tareaEncontrada.completada = 1;
     }
 
-    this.http.put(`${this.API_URL}/tareas/${id}`, {}).subscribe({
+    this.http.put(`${this.API_URL}/tareas/${id}`, { completada: 1 }).subscribe({
       error: (e) => console.error('❌ Error completando tarea', e)
+    });
+  }
+
+  // PUT: Reabrir tarea completada (cambia completada = 0)
+  reabrirTarea(id: string) {
+    const tareaEncontrada = this.tareas.find((t) => t.id === id);
+    if (tareaEncontrada) {
+      tareaEncontrada.completada = 0;
+    }
+
+    this.http.put(`${this.API_URL}/tareas/${id}`, { completada: 0 }).subscribe({
+      error: (e) => console.error('❌ Error reabriendo tarea', e)
     });
   }
 

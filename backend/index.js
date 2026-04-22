@@ -335,6 +335,49 @@ app.put('/admins/:id', validateToken, async (req, res) => {
 });
 
 // ==========================================
+// GET -> LISTAR ADMINISTRADORES (PROTEGIDO)
+// ==========================================
+app.get('/admins', validateToken, (req, res) => {
+    const sql = 'SELECT id, username FROM administradores ORDER BY id ASC';
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('❌ Error GET admins:', err);
+            return res.status(500).json({ mensaje: 'Error al obtener administradores.' });
+        }
+        res.json(results);
+    });
+});
+
+// ==========================================
+// DELETE -> ELIMINAR ADMINISTRADOR (PROTEGIDO)
+// ==========================================
+app.delete('/admins/:id', validateToken, (req, res) => {
+    const { id } = req.params;
+    const adminActual = req.admin;
+
+    // No permitir eliminarse a sí mismo
+    if (Number(id) === adminActual.id) {
+        return res.status(400).json({ mensaje: 'No puedes eliminar tu propia cuenta.' });
+    }
+
+    const sql = 'DELETE FROM administradores WHERE id = ?';
+
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('❌ Error eliminando admin:', err);
+            return res.status(500).json({ mensaje: 'Error al eliminar administrador.' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ mensaje: 'Administrador no encontrado.' });
+        }
+
+        res.json({ mensaje: 'Administrador eliminado correctamente.' });
+    });
+});
+
+// ==========================================
 // GET -> OBTENER TODOS LOS USUARIOS (RF-02)
 // ==========================================
 app.get('/usuarios', (req, res) => {
@@ -526,24 +569,24 @@ app.post('/tareas', validateToken, (req, res) => {
 // ✅ RF/RNF cubiertos: [RF-03]
 
 // ==========================================
-// PUT -> COMPLETAR TAREA
+// PUT -> TOGGLE COMPLETAR/REABRIR TAREA
 // ==========================================
 app.put('/tareas/:id', validateToken, (req, res) => {
     const { id } = req.params;
+    const { completada } = req.body;
 
-    console.log('📌 Completar ID:', id);
+    // Si se envía valor explícito lo usamos, si no toggle
+    const nuevoEstado = completada !== undefined ? completada : 1;
 
-    const sql = 'UPDATE tareas SET completada = 1 WHERE id = ?';
+    const sql = 'UPDATE tareas SET completada = ? WHERE id = ?';
 
-    db.query(sql, [id], (err, result) => {
+    db.query(sql, [nuevoEstado, id], (err, result) => {
         if (err) {
             console.error('❌ Error UPDATE:', err);
             return res.status(500).json(err);
         }
 
-        console.log('✔️ Filas afectadas:', result.affectedRows);
-
-        res.json({ mensaje: 'Tarea completada' });
+        res.json({ mensaje: nuevoEstado === 1 ? 'Tarea completada' : 'Tarea reabierta', completada: nuevoEstado });
     });
 });
 

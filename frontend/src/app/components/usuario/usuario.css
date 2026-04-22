@@ -1,66 +1,51 @@
-:host {
-    display: block;
-}
+:host { display: block; }
 
 button {
     display: flex;
     align-items: center;
-    gap: 14px;
-    background: var(--color-surface);
-    padding: 14px 18px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-border);
-    transition: all var(--transition-smooth);
+    gap: 10px;
+    background: transparent;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
     cursor: pointer;
-    font-family: var(--font-primary);
+    font-family: var(--font);
     color: inherit;
     text-align: left;
     width: 100%;
 }
 
 button:hover {
-    background: var(--color-surface-2);
-    border-color: rgba(108, 99, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.12);
+    background: var(--surface-hover);
+    border-color: var(--border);
 }
 
 .active {
-    background: var(--color-primary-dim);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
-    transform: translateX(4px);
+    background: var(--primary-soft);
+    border-color: rgba(129, 140, 248, 0.25);
 }
 
 img {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
-    border: 2px solid var(--color-border);
-    transition: border-color var(--transition-base);
+    border: 2px solid var(--border);
+    transition: border-color 0.15s ease;
 }
 
 .active img {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-dim);
+    border-color: var(--primary);
 }
 
 span {
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--color-text);
-    transition: color var(--transition-base);
+    color: var(--text-secondary);
+    transition: color 0.15s ease;
 }
 
-button:hover span {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-success));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.active span {
-    color: var(--color-primary);
-}
+button:hover span { color: var(--text); }
+.active span { color: var(--primary); }

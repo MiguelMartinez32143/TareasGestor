@@ -44,6 +44,11 @@ export class Tarea {
     this.tareasService.completarTarea(this.tarea.id);
   }
 
+  // ====== REABRIR ======
+  alReabrirTarea() {
+    this.tareasService.reabrirTarea(this.tarea.id);
+  }
+
   // ====== EDITAR ======
   alEditarTarea() {
     this.tituloEditado = this.tarea.titulo;

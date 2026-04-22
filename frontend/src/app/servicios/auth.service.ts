@@ -9,6 +9,11 @@ interface LoginResponse {
   admin: { id: number; username: string };
 }
 
+interface Admin {
+  id: number;
+  username: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,7 +26,7 @@ export class AuthService {
   private loggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$: Observable<boolean> = this.loggedInSubject.asObservable();
 
-  // POST /login → guardar token, actualizar BehaviorSubject
+  // POST /login
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.API_URL}/login`, { username, password }).pipe(
       tap((res) => {
@@ -34,7 +39,6 @@ export class AuthService {
     );
   }
 
-  // Eliminar token, resetear BehaviorSubject
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
@@ -43,12 +47,10 @@ export class AuthService {
     this.loggedInSubject.next(false);
   }
 
-  // Retorna boolean según existencia del token
   isLoggedIn(): boolean {
     return this.hasToken();
   }
 
-  // Retorna el token almacenado
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('token');
@@ -56,8 +58,7 @@ export class AuthService {
     return null;
   }
 
-  // Retorna los datos del admin logueado
-  getAdmin(): { id: number; username: string } | null {
+  getAdmin(): Admin | null {
     if (isPlatformBrowser(this.platformId)) {
       const admin = localStorage.getItem('admin');
       return admin ? JSON.parse(admin) : null;
@@ -65,8 +66,8 @@ export class AuthService {
     return null;
   }
 
-  // Editar perfil del admin logueado (username y/o password)
-  editarPerfil(username?: string, password?: string): Observable<{ mensaje: string; admin?: { id: number; username: string } }> {
+  // Editar perfil del admin logueado
+  editarPerfil(username?: string, password?: string): Observable<{ mensaje: string; admin?: Admin }> {
     const admin = this.getAdmin();
     if (!admin) {
       throw new Error('No hay sesión activa.');
@@ -76,11 +77,10 @@ export class AuthService {
     if (username) body.username = username;
     if (password) body.password = password;
 
-    return this.http.put<{ mensaje: string; admin?: { id: number; username: string } }>(
+    return this.http.put<{ mensaje: string; admin?: Admin }>(
       `${this.API_URL}/admins/${admin.id}`, body
     ).pipe(
       tap((res) => {
-        // Si se actualizó el username, actualizar localStorage
         if (res.admin && isPlatformBrowser(this.platformId)) {
           localStorage.setItem('admin', JSON.stringify(res.admin));
         }
@@ -93,6 +93,27 @@ export class AuthService {
     return this.http.post<{ mensaje: string }>(`${this.API_URL}/admins`, { username, password });
   }
 
+  // Listar todos los administradores
+  listarAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.API_URL}/admins`);
+  }
+
+  // Editar un administrador por ID
+  editarAdmin(id: number, username?: string, password?: string): Observable<{ mensaje: string; admin?: Admin }> {
+    const body: { username?: string; password?: string } = {};
+    if (username) body.username = username;
+    if (password) body.password = password;
+
+    return this.http.put<{ mensaje: string; admin?: Admin }>(
+      `${this.API_URL}/admins/${id}`, body
+    );
+  }
+
+  // Eliminar administrador
+  eliminarAdmin(id: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(`${this.API_URL}/admins/${id}`);
+  }
+
   private hasToken(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       return !!localStorage.getItem('token');
@@ -100,6 +121,3 @@ export class AuthService {
     return false;
   }
 }
-
-// ✅ RF/RNF cubiertos: [RF-A1, RF-A2, RNF-C2]
-// ⚠️ CONFLICTO DETECTADO: Ninguno

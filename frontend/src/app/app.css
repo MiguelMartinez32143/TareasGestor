@@ -2,16 +2,18 @@
   display: block;
   width: 100%;
   min-height: 100vh;
+  background: var(--bg);
 }
 
 main {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
-  flex: 1;
-  gap: 32px;
-  padding: 32px 48px;
+  gap: 28px;
+  padding: 28px 24px;
   align-items: flex-start;
-  animation: fadeIn 0.4s ease;
+  animation: enter 0.35s ease;
 }
 
 #usuarios {
@@ -20,65 +22,70 @@ main {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  min-width: 260px;
+  gap: 6px;
+  min-width: 240px;
+  max-width: 280px;
   flex-shrink: 0;
+  position: sticky;
+  top: 100px;
 }
 
 #textoCondicional {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin: 0;
-  text-align: center;
-  color: var(--color-text-muted);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-dim);
   flex: 1;
-  padding: 60px 20px;
+  padding: 80px 20px;
+  text-align: center;
 }
 
-/* ✅ TASK-09: Skeleton de carga para lista de usuarios */
+/* Skeleton users */
 .skeleton-usuario {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
 }
 
 .skeleton-avatar {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-surface) 50%, var(--color-surface-2) 75%);
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
   flex-shrink: 0;
 }
 
 .skeleton-nombre {
-  height: 14px;
-  width: 120px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-surface) 50%, var(--color-surface-2) 75%);
+  height: 12px;
+  width: 100px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 @media (max-width: 768px) {
   main {
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
     padding: 16px;
   }
 
   #usuarios {
     min-width: 100%;
+    max-width: 100%;
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 4px;
   }
 
-  #textoCondicional {
-    font-size: 1.2rem;
-    text-align: left;
-    padding: 30px 10px;
+  #usuarios li {
+    flex-shrink: 0;
   }
 }

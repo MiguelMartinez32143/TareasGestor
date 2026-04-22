@@ -34,21 +34,29 @@
         } @else {
 
         <!-- ===== MODO NORMAL (LECTURA) ===== -->
-        <h2>{{ tarea.titulo }}</h2>
+        <div class="tarea-header">
+            <h2>{{ tarea.titulo }}</h2>
+            @if (tarea.completada === 1) {
+                <span class="badge badge-completada">Completada</span>
+            } @else {
+                <span class="badge badge-pendiente">Pendiente</span>
+            }
+        </div>
         <time>{{ tarea.expira | date: 'fullDate'}}</time>
         <p>{{ tarea.resumen }}</p>
 
-        <!-- --- INICIO CÓDIGO AÑADIDO: Botones solo en Modo Admin (RF-B2) --- -->
         @if (esAdmin) {
         <div class="acciones">
-            <button class="btn-terminar" (click)="alCompletarTarea()" [disabled]="tarea.completada === 1">
-                {{ tarea.completada === 1 ? '✔ Completada' : 'Terminar' }}
-            </button>
-            <button class="btn-editar" (click)="alEditarTarea()" [disabled]="tarea.completada === 1">Editar</button>
-            <button class="btn-borrar" (click)="alBorrarTarea()" [disabled]="tarea.completada === 1">Borrar</button>
+            @if (tarea.completada === 1) {
+                <button class="btn-reabrir" (click)="alReabrirTarea()">↩ Reabrir</button>
+                <button class="btn-borrar" (click)="alBorrarTarea()">Borrar</button>
+            } @else {
+                <button class="btn-terminar" (click)="alCompletarTarea()">✓ Completar</button>
+                <button class="btn-editar" (click)="alEditarTarea()">Editar</button>
+                <button class="btn-borrar" (click)="alBorrarTarea()">Borrar</button>
+            }
         </div>
         }
-        <!-- --- FIN CÓDIGO AÑADIDO --- -->
         }
 
     </article>
