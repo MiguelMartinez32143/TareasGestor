@@ -42,21 +42,51 @@ let db;
 const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.DB_URL;
 
 // Debug: Imprimir las llaves disponibles (sin mostrar valores por seguridad)
-console.log('🔑 Variables de entorno disponibles:', Object.keys(process.env).filter(k => k.includes('MYSQL') || k.includes('DB') || k.includes('PASS')));
+console.log('🔑 Variables de entorno disponibles:', Object.keys(process.env).filter(k => k.includes('MYSQL') || k.includes('DB') || k.includes('PASS') || k.includes('TIDB')));
 
-if (dbUrl) {
-    // Si el entorno provee una URL de conexión completa
-    console.log('🔗 Conectando a la BD usando URL de conexión...');
-    db = mysql.createConnection(dbUrl);
-} else {
-    // Variables por separado buscando los nombres más comunes en cualquier hosting
-    console.log('🔗 Conectando a la BD usando variables por separado...');
-    db = mysql.createConnection({
-        host: process.env.MYSQLHOST || process.env.DB_HOST || process.env.DATABASE_HOST || process.env.HOST || 'localhost',
-        user: process.env.MYSQLUSER || process.env.DB_USER || process.env.DATABASE_USER || process.env.USER || 'root',
-        password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD || process.env.PASSWORD || '',
-        database: process.env.MYSQLDATABASE || process.env.DB_NAME || process.env.DATABASE_NAME || 'tareas_db',
-        port: process.env.MYSQLPORT || process.env.DB_PORT || process.env.DATABASE_PORT || 3306
+function handleDisconnect() {
+    console.log('🔗 Configurando conexión a la BD...');
+
+    const dbConfig = {
+        host: process.env.TIDB_HOST || process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+        user: process.env.TIDB_USER || process.env.MYSQLUSER || process.env.DB_USER || 'root',
+        password: process.env.TIDB_PASSWORD || process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
+        database: process.env.TIDB_DATABASE || process.env.MYSQLDATABASE || process.env.DB_NAME || 'tareas_db',
+        port: process.env.TIDB_PORT || process.env.MYSQLPORT || process.env.DB_PORT || 3306,
+        connectTimeout: 20000,
+        ssl: process.env.TIDB_ENABLE_SSL === 'true' ? {
+            minVersion: 'TLSv1.2',
+            rejectUnauthorized: true
+        } : undefined
+    };
+
+    if (dbUrl) {
+        console.log('🔗 Conectando a la BD usando URL de conexión...');
+        db = mysql.createConnection(dbUrl);
+    } else {
+        console.log('🔗 Conectando a la BD usando variables por separado. SSL activado:', !!dbConfig.ssl);
+        db = mysql.createConnection(dbConfig);
+    }
+
+    db.connect(function(err) {
+        if (err) {
+            console.error('❌ Error al conectar a la BD:', err.message);
+            console.log('⏳ Reintentando conexión en 2 segundos (Auto-Healing)...');
+            setTimeout(handleDisconnect, 2000);
+        } else {
+            console.log('✅ Conectado exitosamente a la BD (TiDB/MySQL)');
+            verificarYCrearTablas(); // Dispara la auto-creación de las tablas
+        }
+    });
+
+    db.on('error', function(err) {
+        console.error('❌ Error de Base de Datos:', err.code, err.message);
+        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+            console.log('🔄 Se perdió la conexión con la DB. Reconectando (Auto-Healing)...');
+            handleDisconnect();
+        } else {
+            throw err;
+        }
     });
 }
 
@@ -91,14 +121,10 @@ process.on('unhandledRejection', (err) => {
     console.error('💥 UNHANDLED REJECTION:', err);
 });
 
-// CONECTAR
-db.connect((err) => {
-    if (err) {
-        console.error('❌ Error conexión MySQL:', err);
-        return;
-    }
-    console.log('✅ Conectado a MySQL');
+// INICIAR CONEXIÓN Y AUTO-HEALING
+handleDisconnect();
 
+function verificarYCrearTablas() {
     // Auto-crear tabla administradores si no existe
     const crearTablaAdmins = `
     CREATE TABLE IF NOT EXISTS administradores (
@@ -116,7 +142,6 @@ db.connect((err) => {
     )`;
 
     // Auto-crear tabla tareas si no existe
-    // ✅ TASK-11/TASK-12: FK con ON DELETE CASCADE para integridad referencial — agregado por auditoría
     const crearTablaTareas = `
     CREATE TABLE IF NOT EXISTS tareas (
         id VARCHAR(50) PRIMARY KEY,
@@ -129,34 +154,34 @@ db.connect((err) => {
         FOREIGN KEY (idUsuario) REFERENCES usuarios(id) ON DELETE CASCADE
     ) ENGINE=InnoDB`;
 
+    // Ejecución secuencial recomendada para TiDB Cloud para prevenir bloqueos de metadatos
     db.query(crearTablaAdmins, (err) => {
         if (err) {
             console.error('❌ Error creando tabla administradores:', err.message);
             return;
         }
         // Ejecutar seed después de asegurar que la tabla existe
-        seedAdmin(db).catch((e) => console.error('❌ Error en seed:', e.message));
-    });
+        seedAdmin(db).catch((e) => console.error('❌ Error en seed admin:', e.message));
 
-    db.query(crearTablaUsuarios, (err) => {
-        if (err) {
-            console.error('❌ Error creando tabla usuarios:', err.message);
-            return;
-        }
-        console.log('✅ Tabla usuarios verificada/creada');
+        db.query(crearTablaUsuarios, (err) => {
+            if (err) {
+                console.error('❌ Error creando tabla usuarios:', err.message);
+                return;
+            }
+            console.log('✅ Tabla usuarios verificada/creada');
+            // Seed de usuarios iniciales si la tabla está vacía
+            seedUsuarios(db);
 
-        // Seed de usuarios iniciales si la tabla está vacía
-        seedUsuarios(db);
+            db.query(crearTablaTareas, (err) => {
+                if (err) {
+                    console.error('❌ Error creando tabla tareas:', err.message);
+                    return;
+                }
+                console.log('✅ Tabla tareas verificada/creada');
+            });
+        });
     });
-
-    db.query(crearTablaTareas, (err) => {
-        if (err) {
-            console.error('❌ Error creando tabla tareas:', err.message);
-            return;
-        }
-        console.log('✅ Tabla tareas verificada/creada');
-    });
-});
+}
 
 // ==========================================
 // SEED DE USUARIOS INICIALES
