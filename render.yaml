@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: tareas-gestor-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: TIDB_HOST
+        sync: false
+      - key: TIDB_USER
+        sync: false
+      - key: TIDB_PASSWORD
+        sync: false
+      - key: TIDB_DATABASE
+        sync: false
+      - key: TIDB_PORT
+        value: 4000
+      - key: TIDB_ENABLE_SSL
+        value: "true"
+      - key: CORS_ORIGIN_PROD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
